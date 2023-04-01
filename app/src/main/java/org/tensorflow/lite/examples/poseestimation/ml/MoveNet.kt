@@ -267,6 +267,7 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
             )
         }
         if (torsoVisible(keyPoints)) {
+
             val centerX =
                 (targetKeyPoints[BodyPart.LEFT_HIP.position].coordinate.x +
                         targetKeyPoints[BodyPart.RIGHT_HIP.position].coordinate.x) / 2f

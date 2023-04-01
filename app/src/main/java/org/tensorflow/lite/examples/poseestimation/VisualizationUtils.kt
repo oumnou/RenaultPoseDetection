@@ -16,13 +16,14 @@ limitations under the License.
 
 package org.tensorflow.lite.examples.poseestimation
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.R.attr.translateX
+import android.R.attr.translateY
+import android.graphics.*
+import com.google.mlkit.vision.common.PointF3D
 import org.tensorflow.lite.examples.poseestimation.data.BodyPart
 import org.tensorflow.lite.examples.poseestimation.data.Person
-import kotlin.math.max
+import kotlin.math.*
+
 
 object VisualizationUtils {
     /** Radius of circle used to draw keypoints.  */
@@ -41,8 +42,6 @@ object VisualizationUtils {
     private val bodyJoints = listOf(
         Pair(BodyPart.NOSE, BodyPart.LEFT_EYE),
         Pair(BodyPart.NOSE, BodyPart.RIGHT_EYE),
-        Pair(BodyPart.LEFT_EYE, BodyPart.LEFT_EAR),
-        Pair(BodyPart.RIGHT_EYE, BodyPart.RIGHT_EAR),
         Pair(BodyPart.NOSE, BodyPart.LEFT_SHOULDER),
         Pair(BodyPart.NOSE, BodyPart.RIGHT_SHOULDER),
         Pair(BodyPart.LEFT_SHOULDER, BodyPart.LEFT_ELBOW),
@@ -65,31 +64,36 @@ object VisualizationUtils {
         persons: List<Person>,
         isTrackerEnabled: Boolean = false
     ): Bitmap {
-        val paintCircle = Paint().apply {
+
+
+
+        var paintCircle = Paint().apply {
             strokeWidth = CIRCLE_RADIUS
-            color = Color.RED
+            color = Color.GREEN
             style = Paint.Style.FILL
         }
-        val paintLine = Paint().apply {
+        var paintLine = Paint().apply {
             strokeWidth = LINE_WIDTH
-            color = Color.RED
+            color = Color.GREEN
             style = Paint.Style.STROKE
         }
 
-        val paintText = Paint().apply {
+        var paintText = Paint().apply {
             textSize = PERSON_ID_TEXT_SIZE
-            color = Color.BLUE
+            color = Color.GREEN
             textAlign = Paint.Align.LEFT
         }
-
         val output = input.copy(Bitmap.Config.ARGB_8888, true)
         val originalSizeCanvas = Canvas(output)
+
         persons.forEach { person ->
             // draw person id if tracker is enable
             if (isTrackerEnabled) {
                 person.boundingBox?.let {
                     val personIdX = max(0f, it.left)
                     val personIdY = max(0f, it.top)
+
+
 
                     originalSizeCanvas.drawText(
                         person.id.toString(),
@@ -100,10 +104,56 @@ object VisualizationUtils {
                     originalSizeCanvas.drawRect(it, paintLine)
                 }
             }
+
             bodyJoints.forEach {
                 val pointA = person.keyPoints[it.first.position].coordinate
                 val pointB = person.keyPoints[it.second.position].coordinate
-                originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
+
+
+                val leftHip = person.keyPoints[BodyPart.LEFT_HIP.position].coordinate
+                val rightHip = person.keyPoints[BodyPart.RIGHT_HIP.position].coordinate
+
+                val nose =  person.keyPoints[BodyPart.NOSE.position].coordinate
+
+
+                val tempRight = PointF(person.keyPoints[BodyPart.RIGHT_HIP.position].coordinate.x,person.keyPoints[BodyPart.RIGHT_HIP.position].coordinate.y-60)
+                val tempLeft = PointF(person.keyPoints[BodyPart.LEFT_HIP.position].coordinate.x,person.keyPoints[BodyPart.LEFT_HIP.position].coordinate.y-60)
+
+                originalSizeCanvas.drawLine(tempRight.x, tempRight.y, rightHip.x, rightHip.y, Paint().apply { color = Color.DKGRAY })
+                //originalSizeCanvas.
+               // originalSizeCanvas.drawLine(tempLeft.x, tempLeft.y, leftHip.x, leftHip.y, paintLine)
+
+
+                val angleDegreesLeft = calculateAngle(tempLeft, leftHip, nose);
+                val angleDegreesRight = calculateAngle(tempRight, rightHip, nose);
+
+
+                if ((angleDegreesRight > 30 && angleDegreesRight < 60 ) || (angleDegreesLeft > 30 && angleDegreesLeft < 60)) {
+                    paintLine = Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.YELLOW
+                        style = Paint.Style.STROKE
+                    }
+
+                }else if ((angleDegreesRight >= 60 ) || (angleDegreesLeft >= 60)) {
+                    paintLine = Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.RED
+                        style = Paint.Style.STROKE
+                    }
+                } else {
+                    paintLine = Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.GRAY
+                        style = Paint.Style.STROKE
+
+                    }
+
+                }
+
+                //originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
+                //originalSizeCanvas.drawText(angleDegreesLeft.toString(), 10F, 40F,paintText)
+                //originalSizeCanvas.drawText(angleDegreesRight.toString(), 20F, 90F,paintText)
             }
 
             person.keyPoints.forEach { point ->
@@ -115,6 +165,34 @@ object VisualizationUtils {
                 )
             }
         }
+
         return output
     }
+
+     fun calculateAngle(
+        firstLandmark: PointF,
+        secondLandmark: PointF,
+        thirdLandmark: PointF
+    ): Float {
+        val firstSegmentLength = sqrt(
+            (secondLandmark.x - firstLandmark.x).toDouble().pow(2.0) + (secondLandmark.y - firstLandmark.y).toDouble().pow(2.0)
+        ).toFloat()
+        val secondSegmentLength = sqrt(
+            (thirdLandmark.x - secondLandmark.x).toDouble().pow(2.0) + (thirdLandmark.y - secondLandmark.y).toDouble().pow(2.0)
+        ).toFloat()
+        val dotProduct =
+            (secondLandmark.x - firstLandmark.x) *
+                    (thirdLandmark.x - secondLandmark.x) +
+                    (secondLandmark.y - firstLandmark.y) *
+                    (thirdLandmark.y - secondLandmark.y)
+
+        val cosAngle = dotProduct / (firstSegmentLength * secondSegmentLength)
+        var angle = Math.toDegrees(acos(cosAngle.toDouble())).toFloat()
+        angle = 180 - angle;
+        return if (angle >= 0) angle else angle + 360
+    }
+
+
+
+
 }

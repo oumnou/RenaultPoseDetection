@@ -38,7 +38,7 @@ import org.tensorflow.lite.examples.poseestimation.camera.CameraSource
 import org.tensorflow.lite.examples.poseestimation.data.Device
 import org.tensorflow.lite.examples.poseestimation.ml.*
 
-class MainActivity : AppCompatActivity() {
+class LiveActivity : AppCompatActivity() {
     companion object {
         private const val FRAGMENT_DIALOG = "dialog"
     }
@@ -305,7 +305,8 @@ class MainActivity : AppCompatActivity() {
                 // MoveNet Lightning (SinglePose)
                 showPoseClassifier(true)
                 showDetectionScore(true)
-                showTracker(false)
+                showTracker(true)
+                //TODO : showTracker(false)
                 MoveNet.create(this, device, ModelType.Lightning)
             }
             1 -> {

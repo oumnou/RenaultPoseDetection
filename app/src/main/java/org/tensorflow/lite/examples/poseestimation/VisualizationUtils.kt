@@ -68,8 +68,8 @@ object VisualizationUtils {
 
 
         var paintCircle = Paint().apply {
-            strokeWidth = CIRCLE_RADIUS
-            color = Color.GREEN
+            strokeWidth = 0.3f
+            color = Color.GRAY
             style = Paint.Style.FILL
         }
         var paintLine = Paint().apply {
@@ -108,52 +108,136 @@ object VisualizationUtils {
             bodyJoints.forEach {
                 val pointA = person.keyPoints[it.first.position].coordinate
                 val pointB = person.keyPoints[it.second.position].coordinate
-
+                originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
 
                 val leftHip = person.keyPoints[BodyPart.LEFT_HIP.position].coordinate
                 val rightHip = person.keyPoints[BodyPart.RIGHT_HIP.position].coordinate
-
                 val nose =  person.keyPoints[BodyPart.NOSE.position].coordinate
+                val leftShoulder = person.keyPoints[BodyPart.LEFT_SHOULDER.position].coordinate
+                val rightShoulder = person.keyPoints[BodyPart.RIGHT_SHOULDER.position].coordinate
+                val rightElbow = person.keyPoints[BodyPart.RIGHT_ELBOW.position].coordinate
+                val leftElbow = person.keyPoints[BodyPart.LEFT_ELBOW.position].coordinate
+                val leftWrist = person.keyPoints[BodyPart.LEFT_WRIST.position].coordinate
+                val rightWrist = person.keyPoints[BodyPart.RIGHT_WRIST.position].coordinate
+                val eye = person.keyPoints[BodyPart.RIGHT_EYE.position].coordinate
+
+
+                //region Angle Tronc A
+
+
 
 
                 val tempRight = PointF(person.keyPoints[BodyPart.RIGHT_HIP.position].coordinate.x,person.keyPoints[BodyPart.RIGHT_HIP.position].coordinate.y-60)
                 val tempLeft = PointF(person.keyPoints[BodyPart.LEFT_HIP.position].coordinate.x,person.keyPoints[BodyPart.LEFT_HIP.position].coordinate.y-60)
 
-                originalSizeCanvas.drawLine(tempRight.x, tempRight.y, rightHip.x, rightHip.y, Paint().apply { color = Color.DKGRAY })
-                //originalSizeCanvas.
-               // originalSizeCanvas.drawLine(tempLeft.x, tempLeft.y, leftHip.x, leftHip.y, paintLine)
 
 
-                val angleDegreesLeft = calculateAngle(tempLeft, leftHip, nose);
+                var angleDegreesLeft = calculateAngle(tempLeft, leftHip, nose);
                 val angleDegreesRight = calculateAngle(tempRight, rightHip, nose);
 
 
                 if ((angleDegreesRight > 30 && angleDegreesRight < 60 ) || (angleDegreesLeft > 30 && angleDegreesLeft < 60)) {
-                    paintLine = Paint().apply {
+
+                    originalSizeCanvas.drawLine(leftHip.x, leftHip.y, leftShoulder.x, leftShoulder.y,Paint().apply {
                         strokeWidth = LINE_WIDTH
                         color = Color.YELLOW
                         style = Paint.Style.STROKE
-                    }
+                    })
+                    originalSizeCanvas.drawLine(rightHip.x, rightHip.y, rightShoulder.x, rightShoulder.y,  Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.YELLOW
+                        style = Paint.Style.STROKE
+                    })
+
+
 
                 }else if ((angleDegreesRight >= 60 ) || (angleDegreesLeft >= 60)) {
-                    paintLine = Paint().apply {
+
+                    originalSizeCanvas.drawLine(leftHip.x, leftHip.y, leftShoulder.x, leftShoulder.y, Paint().apply {
                         strokeWidth = LINE_WIDTH
                         color = Color.RED
                         style = Paint.Style.STROKE
-                    }
-                } else {
-                    paintLine = Paint().apply {
+                    })
+                    originalSizeCanvas.drawLine(rightHip.x, rightHip.y, rightShoulder.x, rightShoulder.y, Paint().apply {
                         strokeWidth = LINE_WIDTH
-                        color = Color.GRAY
+                        color = Color.RED
                         style = Paint.Style.STROKE
+                    })
+                } else {
 
-                    }
+                    originalSizeCanvas.drawLine(leftHip.x, leftHip.y, leftShoulder.x, leftShoulder.y, Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.GREEN
+                        style = Paint.Style.STROKE
+                    })
+                    originalSizeCanvas.drawLine(rightHip.x, rightHip.y, rightShoulder.x, rightShoulder.y, Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.GREEN
+                        style = Paint.Style.STROKE
+                    })
 
                 }
 
-                //originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
-                //originalSizeCanvas.drawText(angleDegreesLeft.toString(), 10F, 40F,paintText)
-                //originalSizeCanvas.drawText(angleDegreesRight.toString(), 20F, 90F,paintText)
+                //endregion
+
+                //region Angle Arm F5 (1,2)
+
+
+                val mLeftShoulder = PointF(person.keyPoints[BodyPart.LEFT_SHOULDER.position].coordinate.x + 20,person.keyPoints[BodyPart.LEFT_SHOULDER.position].coordinate.y)
+                val mRightShoulder = PointF(person.keyPoints[BodyPart.RIGHT_SHOULDER.position].coordinate.x - 20,person.keyPoints[BodyPart.RIGHT_SHOULDER.position].coordinate.y)
+
+                originalSizeCanvas.drawPoint(mLeftShoulder.x,mLeftShoulder.y,Paint().apply {
+                    strokeWidth = LINE_WIDTH
+                    color = Color.BLUE
+                    style = Paint.Style.STROKE
+                })
+                originalSizeCanvas.drawPoint(mRightShoulder.x,mRightShoulder.y,Paint().apply {
+                    strokeWidth = LINE_WIDTH
+                    color = Color.RED
+                    style = Paint.Style.STROKE
+                })
+                val angleDegreesLeftArm = calculateAngle(mLeftShoulder, leftShoulder, leftWrist);
+                val angleDegreesRightArm = calculateAngle(mRightShoulder, rightShoulder, rightWrist);
+
+
+                //180°
+                val angleDegreesStrictRightArm = calculateAngle(rightShoulder, rightElbow, rightWrist);
+                val angleDegreesStrictLeftArm = calculateAngle(leftShoulder, leftElbow, leftWrist);
+
+
+                if (eye.y > leftWrist.y || (angleDegreesLeftArm > 45 && angleDegreesStrictLeftArm > 150f)){
+
+                    originalSizeCanvas.drawLine(leftElbow.x, leftElbow.y, leftWrist.x, leftWrist.y, Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.RED
+                        style = Paint.Style.STROKE
+                    })
+
+                    originalSizeCanvas.drawLine(leftShoulder.x, leftShoulder.y, leftElbow.x, leftElbow.y, Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.RED
+                        style = Paint.Style.STROKE
+                    })
+
+                }
+
+                if (eye.y > rightWrist.y || (angleDegreesRightArm > 45 && angleDegreesStrictRightArm > 150f)){
+
+                    originalSizeCanvas.drawLine(rightElbow.x, rightElbow.y, rightWrist.x, rightWrist.y, Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.RED
+                        style = Paint.Style.STROKE
+                    })
+                    originalSizeCanvas.drawLine(rightShoulder.x, rightShoulder.y, rightElbow.x, rightElbow.y, Paint().apply {
+                        strokeWidth = LINE_WIDTH
+                        color = Color.RED
+                        style = Paint.Style.STROKE
+                    })
+
+                }
+                //endregion
+
+
             }
 
             person.keyPoints.forEach { point ->

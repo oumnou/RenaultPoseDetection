@@ -1,10 +1,8 @@
-# TensorFlow Lite Pose Estimation Android Demo
+# TensorFlow Lite Application "Renault Pose Detector" '
+
 
 ### Overview
-This is an app that continuously detects the body parts in the frames seen by
-your device's camera. These instructions walk you through building and running
-the demo on an Android device. Camera captures are discarded immediately after
-use, nothing is stored or saved.
+Renault Pose Detector is an innovative mobile application designed to enhance the safety and efficiency of workers in the automotive industry. Our application utilizes technology powered by Kotlin and TensorFlow to accurately detect the postures of workers performing tasks on cars. By leveraging machine learning algorithms, our application can identify potential safety risks and assist workers in optimizing their posture for improved performance and reduced risk of injury.
 
 The app demonstrates how to use 4 models:
 
@@ -18,42 +16,9 @@ can be largely incorrect.
 input image.
    * MoveNet MultiPose: Support up to 6 persons.
 
-See this [blog post](https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html)
-for a comparison between these models.
 
-![Demo Image](posenetimage.png)
 
-## Build the demo using Android Studio
-
-### Prerequisites
-
-* If you don't have it already, install **[Android Studio](
- https://developer.android.com/studio/index.html)** 4.2 or
- above, following the instructions on the website.
-
-* Android device and Android development environment with minimum API 21.
-
-### Building
-* Open Android Studio, and from the `Welcome` screen, select
-`Open an existing Android Studio project`.
-
-* From the `Open File or Project` window that appears, navigate to and select
- the `lite/examples/pose_estimation/android` directory from wherever you
- cloned the `tensorflow/examples` GitHub repo. Click `OK`.
-
-* If it asks you to do a `Gradle Sync`, click `OK`.
-
-* You may also need to install various platforms and tools, if you get errors
- like `Failed to find target with hash string 'android-21'` and similar. Click
- the `Run` button (the green arrow) or select `Run` > `Run 'android'` from the
- top menu. You may need to rebuild the project using `Build` > `Rebuild Project`.
-
-* If it asks you to use `Instant Run`, click `Proceed Without Instant Run`.
-
-* Also, you need to have an Android device plugged in with developer options
- enabled at this point. See **[here](
- https://developer.android.com/studio/run/device)** for more details
- on setting up developer devices.
+![Demo Image](posenetimage.jpg)
 
 
 ### Model used
@@ -67,7 +32,7 @@ If you explicitly want to download the model, you can download it from here:
 * [Movenet Thunder](https://tfhub.dev/google/movenet/singlepose/thunder/)
 * [Movenet MultiPose](https://tfhub.dev/google/movenet/multipose/lightning/)
 
-### Additional Note
-_Please do not delete the assets folder content_. If you explicitly deleted the
- files, then please choose `Build` > `Rebuild` from menu to re-download the
- deleted model files into assets folder.
+
+### More Informations
+
+https://drive.google.com/file/d/1INqwsnHRC6FjIYdCUBKMLidJ-oVo2ITo/view?usp=sharing

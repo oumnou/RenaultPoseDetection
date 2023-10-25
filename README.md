@@ -16,9 +16,12 @@ can be largely incorrect.
 input image.
    * MoveNet MultiPose: Support up to 6 persons.
 
+## Screenshots
 
+<div align="center">
+<img src="posenetimage.jpg" alt="Alt Text"  height="400">
+</div>
 
-![Demo Image](posenetimage.jpg)
 
 
 ### Model used
